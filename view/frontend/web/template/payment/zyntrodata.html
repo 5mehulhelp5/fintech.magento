@@ -1,0 +1,50 @@
+<div class="payment-method" data-bind="css: {'_active': isChecked() === getCode()}, visible: options.length">
+    <div class="payment-method-title field choice">
+        <input type="radio" name="payment[method]" class="radio" data-bind="attr: {id: getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()"/>
+        <label class="label" data-bind="attr: {for: getCode()}"><span data-bind="text: getTitle()"></span></label>
+    </div>
+    <div class="payment-method-content">
+        <!-- ko foreach: getRegion('messages') --><!-- ko template: getTemplate() --><!-- /ko --><!-- /ko -->
+        <div class="payment-method-billing-address">
+            <!-- ko foreach: $parent.getRegion(getBillingAddressFormName()) --><!-- ko template: getTemplate() --><!-- /ko --><!-- /ko -->
+        </div>
+        <div class="field required">
+            <label class="label" for="zyntrodata-payee"><span data-bind="i18n: 'Payment option'"></span></label>
+            <div class="control"><select id="zyntrodata-payee" data-bind="options: options, optionsText: optionLabel, optionsValue: function (item) { return String(item.payeeId); }, optionsCaption: $t('Choose a payment option'), value: payee"></select></div>
+        </div>
+        <!-- ko if: method() === 'BANK_TRANSFER' -->
+        <div class="field required">
+            <label class="label" for="zyntrodata-country"><span data-bind="i18n: 'Bank transfer country'"></span></label>
+            <div class="control"><select id="zyntrodata-country" data-bind="options: countries, optionsText: 'countryName', optionsValue: 'countryCode', optionsCaption: $t('Choose a country'), value: country"></select></div>
+        </div>
+        <!-- /ko -->
+        <p role="status" data-bind="visible: loadingInstructions, i18n: 'Loading payment instructions…'"></p>
+        <p role="alert" class="message error" data-bind="visible: instructionError, text: instructionError"></p>
+        <div data-bind="if: instructions">
+            <img width="220" height="220" alt="Payment QR code" data-bind="visible: qrUrl, attr: {src: qrUrl}"/>
+            <dl data-bind="foreach: destinationFields">
+                <dt data-bind="text: label"></dt><dd data-bind="text: value"></dd>
+            </dl>
+        </div>
+        <!-- ko if: needsReference -->
+        <p data-bind="i18n: 'Complete your payment using the instructions above, then enter its confirmation reference. Your payment will be verified.'"></p>
+        <div class="field required">
+            <label class="label" for="zyntrodata-reference"><span data-bind="i18n: 'Payment confirmation reference'"></span></label>
+            <input class="input-text" id="zyntrodata-reference" type="text" data-bind="textInput: confirmation"/>
+        </div>
+        <!-- /ko -->
+        <!-- ko if: method() === 'ECHECK' -->
+        <p data-bind="i18n: 'You will enter your bank details securely on Zyntrodata after placing the order. Your checkout details will be prefilled.'"></p>
+        <!-- /ko -->
+        <!-- ko if: method() === 'CREDIT_CARD' -->
+        <p data-bind="text: selected().processingProvider === 'NMI' ? $t('Place your order to request a payment invoice by email. Your order remains pending payment.') : $t('Your order will be submitted for payment verification. This checkout does not charge a card directly.')"></p>
+        <!-- /ko -->
+        <div class="checkout-agreements-block">
+            <!-- ko foreach: $parent.getRegion('before-place-order') --><!-- ko template: getTemplate() --><!-- /ko --><!-- /ko -->
+        </div>
+        <div class="actions-toolbar"><div class="primary">
+            <button class="action primary checkout" type="submit" data-bind="click: placeOrder, enable: isPlaceOrderActionAllowed() &amp;&amp; !loadingInstructions(), attr: {title: $t('Place Order')}"><span data-bind="i18n: 'Place Order'"></span></button>
+        </div></div>
+    </div>
+</div>
+

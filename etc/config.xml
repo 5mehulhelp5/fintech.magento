@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+ <default><payment><zyntrodata>
+  <active>0</active><model>Zyntrodata\Payments\Model\Method</model><title>Zyntrodata Payments</title>
+  <payment_action>order</payment_action><order_status>holded</order_status>
+  <can_use_for_multishipping>0</can_use_for_multishipping><sort_order>50</sort_order>
+ </zyntrodata></payment></default>
+</config>

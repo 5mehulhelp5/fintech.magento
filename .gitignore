@@ -1,0 +1,6 @@
+vendor/
+artifacts/
+.phpunit.cache/
+VALIDATION.md
+tests/
+docs/

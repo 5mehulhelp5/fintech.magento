@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+ <table name="sales_order_payment" resource="sales">
+  <column xsi:type="varchar" name="zyntrodata_reference" nullable="true" length="255" comment="Zyntrodata Payment Reference"/>
+  <column xsi:type="timestamp" name="zyntrodata_next_poll_at" nullable="true" on_update="false" comment="Next Zyntrodata Poll UTC"/>
+  <column xsi:type="timestamp" name="zyntrodata_poll_until" nullable="true" on_update="false" comment="Zyntrodata Poll Deadline UTC"/>
+  <column xsi:type="smallint" name="zyntrodata_poll_failures" nullable="false" unsigned="true" default="0" comment="Zyntrodata Consecutive Failures"/>
+  <column xsi:type="varchar" name="zyntrodata_poll_scope" nullable="true" length="64" comment="Zyntrodata Merchant Configuration Fingerprint"/>
+  <index referenceId="ZYNTRODATA_POLL_DUE" indexType="btree"><column name="method"/><column name="zyntrodata_next_poll_at"/></index>
+  <index referenceId="ZYNTRODATA_PAYMENT_REFERENCE" indexType="btree"><column name="zyntrodata_reference"/></index>
+ </table>
+</schema>

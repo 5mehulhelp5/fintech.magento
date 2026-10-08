@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+ <system><section id="payment"><group id="zyntrodata" translate="label" type="text" sortOrder="950" showInDefault="1" showInWebsite="1" showInStore="1">
+  <label>Zyntrodata — Classic Checkout</label>
+  <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1"><label>Enabled</label><source_model>Magento\Config\Model\Config\Source\Yesno</source_model></field>
+  <field id="title" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1"><label>Checkout Title</label><validate>required-entry</validate></field>
+  <field id="api_url" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1"><label>API Origin</label><comment>HTTPS origin only, for example https://api.example.com. Do not append /api.</comment><validate>required-entry validate-url</validate><backend_model>Zyntrodata\Payments\Model\Config\ApiOrigin</backend_model></field>
+  <field id="partner_code" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1"><label>Partner Code</label><validate>required-entry</validate></field>
+  <field id="secure_key" translate="label" type="obscure" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1"><label>Secure Key</label><backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model></field>
+  <field id="secure_iv" translate="label" type="obscure" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1"><label>Secure IV</label><backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model></field>
+  <field id="hosted_return_url" translate="label comment" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1"><label>Hosted Payment Return URL</label><comment>Optional. Leave blank to use this store's checkout success page. Use HTTPS for a live store; HTTP localhost is supported for local development. This is the return destination, not the Zyntrodata payment form URL. No change to Magento Base URLs is required.</comment><backend_model>Zyntrodata\Payments\Model\Config\HostedReturnUrl</backend_model></field>
+  <field id="sort_order" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1"><label>Sort Order</label><validate>validate-number</validate></field>
+ </group></section></system>
+</config>

@@ -1,0 +1,11 @@
+<?php $payment = $block->zyntrodataPayment(); ?>
+<?php if ($payment): ?>
+<div class="message notice">
+    <?php if ($payment->getAdditionalInformation('zyntrodata_submission') === 'SUBMITTED'): ?>
+        <p><?= $block->escapeHtml(__('Your order has been saved and your payment submitted for processing. It is not yet confirmed as paid.')) ?></p>
+        <p><?= $block->escapeHtml(__('Payment reference: %1', $payment->getAdditionalInformation('zyntrodata_reference'))) ?></p>
+    <?php else: ?>
+        <p><?= $block->escapeHtml(__('Your order has been saved, but payment needs review. Please contact the store with your order number. Do not place another order or send another payment.')) ?></p>
+    <?php endif; ?>
+</div>
+<?php endif; ?>
