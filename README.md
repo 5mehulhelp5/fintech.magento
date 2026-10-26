@@ -1,59 +1,72 @@
-# Zyntrodata Payments — Installation Guide
+# Zyntrodata Payments for Magento
 
-For Magento Open Source / Adobe Commerce 2.4.6 (including 2.4.6-p8), PHP 8.1 or 8.2, and classic checkout.
+Version 0.3.0-rc2 — staging acceptance-test package, 27 October 2026.
+For Magento 2.4.6 / 2.4.6-p8, PHP 8.1 or 8.2, classic checkout.
 
-This working source contains an unreleased risk-review update. Existing ZIPs have not been rebuilt. See [payment operations](docs/Payment_Operations.md) for hosted E-Check, reconciliation, cancellation and refund behavior and outstanding release requirements.
+## Install
 
-## 1. Install
+Have your Magento developer back up and install on a staging store first.
+Extract the ZIP directly into `app/code/Zyntrodata/Payments/`.
+`registration.php` must be directly inside that folder.
 
-Ask your Magento developer to install and test the module on a staging store first.
+Run from the Magento root as its filesystem owner:
 
-Extract the ZIP contents into:
+```sh
+php bin/magento module:enable Zyntrodata_Payments
+php bin/magento setup:upgrade
+php bin/magento setup:di:compile
+php bin/magento setup:static-content:deploy en_US
+php bin/magento cache:clean
+```
 
-    app/code/Zyntrodata/Payments/
+Use your actual store locales and normal static-asset deployment process.
+Keep Magento cron running. Upgrade the existing Zyntrodata module in place;
+do not enable a duplicate payment module or resubmit existing orders.
 
-The file `registration.php` must sit directly inside that folder.
-
-From the Magento root, run as the Magento filesystem owner:
-
-    php bin/magento module:enable Zyntrodata_Payments
-    php bin/magento setup:upgrade
-    php bin/magento setup:di:compile
-    php bin/magento setup:static-content:deploy en_US
-    php bin/magento cache:clean
-
-Replace `en_US` with your store's locale(s). Ensure Magento cron is running. When updating an existing installation, use your normal deployment process to refresh generated static assets.
-
-## 2. Configure
+## Configure
 
 Open **Stores → Configuration → Sales → Payment Methods → Zyntrodata — Classic Checkout**.
+Select the correct store/website scope, enable the method and enter the API Origin,
+Partner Code, Secure Key and Secure IV supplied separately by Zyntrodata.
+The API origin must be HTTPS, without `/api`; use matching DEV/UAT credentials for testing.
 
-Select the correct website/store scope, then enter:
+**Hosted Payment Return URL** is optional. Leave it blank to use your normal checkout
+success page, or enter an HTTPS destination. The hosted form URL comes from the API.
+You do not need to edit Magento core or change its global Secure Base URL for this setting.
+HTTP loopback returns are supported only for local development with the matching API.
 
-- **API Origin:** the HTTPS address supplied by Zyntrodata, without an `/api` suffix.
-- **Partner Code**, **Secure Key**, and **Secure IV:** supplied separately through a secure channel.
-- **Checkout Title:** Zyntrodata Payments (update this value when upgrading an existing installation).
-- **Hosted Payment Return URL:** optional. Leave blank for the store's normal checkout success page, or enter your own HTTPS return destination. HTTP loopback addresses such as `http://localhost:8088/` are allowed for development by the matching API update. This setting does not change Magento's Base URLs or choose the hosted payment form; that form URL comes from Zyntrodata.
-- **Enabled:** Yes.
+Zyntrodata must enable Magento and the selected methods for your merchant. Checkout uses USD.
+Before testing, have Zyntrodata confirm the matching API/hosted UI, database prerequisites
+and webhook service are deployed. Your store needs a publicly reachable HTTPS callback
+at `/zyntrodata/webhook/status`; permit it through your firewall and do not cache it.
+Credentials and signing secrets must never be shared with customers or included in support screenshots.
 
-Save and clean the configuration cache. Use the API address and credentials issued for the intended environment; test and production credentials are separate.
+## Verify before going live
 
-Configure this plugin under Payment Methods; no edits to Magento core, project code or global Secure Base URL are needed for hosted returns. A live destination still needs working HTTPS. Public HTTPS webhook delivery is a separate hosting requirement and is not enabled by setting a browser return URL.
+- Confirm only your enabled payment methods appear. QR/Bank Transfer show the correct instructions.
+- E-Check opens Zyntrodata's hosted form, reuses checkout details and returns to the correct store page.
+- Orders stay **On hold** until the API confirms payment. E-Check advances on deposit;
+  physical checks on clearance; NMI requires provider payment confirmation. Internal approval alone is insufficient.
+- Verify a signed notification records a paid invoice without another charge, and repeated notifications do not duplicate it.
+- Test eligible unpaid cancellation and the portal refund process with Zyntrodata.
 
-Zyntrodata must enable Magento and your payment options for your merchant account. Checkout currently requires USD.
+For refunds, use **Request Refund** in the Zyntrodata portal. Approval adds a note only.
+Once backoffice records the refund check as mailed, Magento records the actual amount
+as an offline credit memo. It does not send another refund, restock inventory or confirm check clearance.
+Paid or in-progress payments require portal review instead of unpaid cancellation.
 
-## 3. Check checkout
+If an order says **RECONCILIATION_REQUIRED**, keep it held and contact Zyntrodata with its
+order/invoice number, amount, time and saved reference. Do not clear the submission marker,
+place another order or ask the customer to pay again until the original outcome is resolved.
 
-Add an item and proceed through classic checkout to **Review & Payments**.
+## Acceptance-test limitations
 
-Select **Zyntrodata Payments** and confirm that your assigned payment options appear. For QR, verify the image and destination details. For Bank Transfer, select a country and verify the bank details. Customer details, order number, and total come from checkout.
+Local simulated-payment checks passed; live merchant end-to-end acceptance is still required.
+Reads/authentication use a five-second budget; payment creation can take up to 45 seconds.
+Options cache for 30 seconds; tokens cache for up to 15 minutes within expiry.
+This ZIP excludes tests, internal documentation and credentials. Share credentials separately.
+Contact your Zyntrodata onboarding contact before production activation.
 
-Coordinate an approved test payment with Zyntrodata before going live. Orders remain On hold until payment is confirmed. Signed notifications retrieve current API status and record payment without charging again. Your public HTTPS callback must be reachable and Magento cron must run. E-Check redirects to the Zyntrodata hosted form; checkout does not collect bank details.
+## Release 0.3.0-rc2
 
-## Need help?
-
-If an option is missing or a notice appears, contact your Zyntrodata onboarding/support contact with the Magento version, selected environment, and error text or screenshot. Never include credentials or tokens.
-
-## Replacing an earlier test package
-
-Version 0.2.0 uses the module name `Zyntrodata_Payments` and payment code `zyntrodata`. If an earlier package was installed under a different name, ask your developer to disable that module before enabling this one. Do not enable both together. Re-enter the supplied API settings and credentials in the new configuration section, then refresh generated assets and Magento caches. Existing settings and order payment metadata are not migrated automatically. Reconcile any pending orders from the earlier module through the portal/backoffice before retiring it; do not resubmit them.
+Sends the order storefront hostname so the API can describe the payment as Payment for order #123 — shop.example.com. Requires the corresponding API update. No new settings or database script. Composer installation is also available; see Magento-Composer-Installation-Guide.md supplied with the release.

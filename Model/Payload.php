@@ -37,7 +37,11 @@ class Payload
         if ($invoice === '' || !is_finite($amount) || $amount <= 0) {
             throw new LocalizedException(__('A valid order number and positive total are required.'));
         }
-        $payload = ['payeeId' => $payeeId, 'customer' => $customer, 'invoiceNumber' => $invoice, 'amount' => $amount];
+        $storeDomain = strtolower((string)parse_url(
+            $order->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_WEB), PHP_URL_HOST
+        ));
+        $payload = ['payeeId' => $payeeId, 'customer' => $customer, 'invoiceNumber' => $invoice,
+            'amount' => $amount, 'storeDomain' => $storeDomain];
         if (in_array($method, ['QR', 'BANK_TRANSFER'], true)) {
             $reference = trim((string)$payment->getAdditionalInformation('zyntrodata_confirmation_reference'));
             if ($reference === '') { throw new LocalizedException(__('Enter your payment confirmation reference.')); }
