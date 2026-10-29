@@ -34,7 +34,7 @@
         </div>
         <!-- /ko -->
         <!-- ko if: method() === 'ECHECK' -->
-        <p data-bind="i18n: 'You will enter your bank details securely on Zyntrodata after placing the order. Your checkout details will be prefilled.'"></p>
+        <p data-bind="i18n: 'You will enter your bank details securely on the hosted payment page after placing the order. Your checkout details will be prefilled.'"></p>
         <!-- /ko -->
         <!-- ko if: method() === 'CREDIT_CARD' -->
         <p data-bind="text: selected().processingProvider === 'NMI' ? $t('Place your order to request a payment invoice by email. Your order remains pending payment.') : $t('Your order will be submitted for payment verification. This checkout does not charge a card directly.')"></p>

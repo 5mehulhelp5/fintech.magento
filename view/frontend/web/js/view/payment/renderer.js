@@ -58,7 +58,8 @@ define([
             if (this.options.length === 1) { this.payee(String(this.options[0].payeeId)); }
             return this;
         },
-        optionLabel: function (option) { return option.paymentMethodCode.replace(/_/g, ' ') + ' — ' + option.payeeName; },
+        getTitle: function () { return $t('Payment options'); },
+        optionLabel: function (option) { return (String(option.payeeName || '').replace(/zyntrodata/ig, '').replace(/^[\s—–-]+|[\s—–-]+$/g, '') || option.paymentOptionType) + (option.paymentMethodCode === 'CREDIT_CARD' ? ' (for US customers only)' : ''); },
         loadInstructions: function () {
             var self = this, sequence = ++this.requestSequence, payeeId = String(this.payee()),
                 option = this.options.find(function (item) { return String(item.payeeId) === payeeId; }),
@@ -90,6 +91,8 @@ define([
             if (!this.selected()) { message = $t('Choose a payment option.'); }
             else if (!billing || !billing.firstname || !billing.lastname || !billing.telephone) {
                 message = $t('Complete your billing name and telephone.');
+            } else if (this.method() === 'CREDIT_CARD' && String(billing.countryId || '').toUpperCase() !== 'US') {
+                message = $t('Credit Card is available for US customers only.');
             } else if (this.method() === 'BANK_TRANSFER' && !this.country()) {
                 message = $t('Choose a bank transfer country.');
             } else if (['QR', 'BANK_TRANSFER', 'PHYSICAL_CHECK'].indexOf(this.method()) >= 0 && !this.instructions()) {

@@ -28,12 +28,12 @@ class CheckoutConfig implements ConfigProviderInterface
             try {
                 $options = $this->options->all($storeId, (string)$this->session->getQuote()->getQuoteCurrencyCode());
                 if (!$options) {
-                    $notice = (string)__('No Zyntrodata payment options are available for this checkout currency.');
+                    $notice = (string)__('No payment options are available for this checkout currency.');
                 }
             } catch (\Magento\Framework\Exception\LocalizedException $e) {
                 $notice = (string)__('This payment option is currently unavailable. Please choose another method or contact the store.');
             } catch (\Throwable $e) {
-                $notice = (string)__('Zyntrodata payments are currently unavailable. Please contact the store.');
+                $notice = (string)__('Payments are currently unavailable. Please contact the store.');
             }
         }
         return ['payment' => ['zyntrodata' => ['options' => $options, 'notice' => $notice]]];

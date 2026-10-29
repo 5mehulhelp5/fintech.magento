@@ -1,6 +1,6 @@
 # Zyntrodata Payments for Magento
 
-Version 0.3.0-rc2 — staging acceptance-test package, 27 October 2026.
+Version 0.3.0-rc3 — staging acceptance-test package, 27 October 2026.
 For Magento 2.4.6 / 2.4.6-p8, PHP 8.1 or 8.2, classic checkout.
 
 ## Install
@@ -67,6 +67,11 @@ Options cache for 30 seconds; tokens cache for up to 15 minutes within expiry.
 This ZIP excludes tests, internal documentation and credentials. Share credentials separately.
 Contact your Zyntrodata onboarding contact before production activation.
 
-## Release 0.3.0-rc2
+## Release 0.3.0-rc3
 
 Sends the order storefront hostname so the API can describe the payment as Payment for order #123 — shop.example.com. Requires the corresponding API update. No new settings or database script. Composer installation is also available; see Magento-Composer-Installation-Guide.md supplied with the release.
+
+
+## Checkout eligibility update
+
+Removes Zyntrodata branding from checkout, shows payment descriptions once, and labels credit cards for US customers only. Sends and validates US billing country for credit cards. Requires matching API enforcement. Update the plugin before deploying that enforcement; older clients omit the credit-card billing country.

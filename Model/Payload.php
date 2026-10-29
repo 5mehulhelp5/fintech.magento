@@ -75,6 +75,10 @@ class Payload
             $payload['returnUrl'] = $this->config->hostedReturnUrl($order);
         }
         if ($method === 'CREDIT_CARD') {
+            $payload['address'] = ['country' => strtoupper(trim((string)$address->getCountryId()))];
+            if ($payload['address']['country'] !== 'US') {
+                throw new LocalizedException(__('Credit Card is available for US customers only.'));
+            }
             if (($option['processingProvider'] ?? '') === 'NMI'
                 && (strlen('CC-' . $invoice) > 255 || round($amount, 2) != $amount)) {
                 throw new LocalizedException(__('The order amount or invoice number is not valid for this card option.'));

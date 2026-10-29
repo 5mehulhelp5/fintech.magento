@@ -2,7 +2,7 @@
   "name": "zyntrodata/module-payments",
   "description": "Zyntrodata payments for Magento classic checkout",
   "type": "magento2-module",
-  "version": "0.3.0-rc2",
+  "version": "0.3.0-rc3",
   "license": "proprietary",
   "require": {
     "php": "~8.1.0 || ~8.2.0",
